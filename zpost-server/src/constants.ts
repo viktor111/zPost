@@ -1,0 +1,1 @@
+export const __pord__ = process.env.NODE_ENV !== 'production'
