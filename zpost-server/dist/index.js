@@ -24,6 +24,7 @@ require("reflect-metadata");
 const redis_1 = __importDefault(require("redis"));
 const express_session_1 = __importDefault(require("express-session"));
 const connect_redis_1 = __importDefault(require("connect-redis"));
+const cors_1 = __importDefault(require("cors"));
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const orm = yield core_1.MikroORM.init(mikro_orm_config_1.default);
@@ -31,6 +32,10 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
         const app = express_1.default();
         const RedisStore = connect_redis_1.default(express_session_1.default);
         const redisClient = redis_1.default.createClient();
+        app.use(cors_1.default({
+            origin: 'http://localhost:3000',
+            credentials: true
+        }));
         app.use(express_session_1.default({
             name: 'qid',
             store: new RedisStore({
@@ -54,7 +59,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
             }),
             context: ({ req, res }) => ({ em: orm.em, req, res })
         });
-        appoloServer.applyMiddleware({ app });
+        appoloServer.applyMiddleware({ app, cors: { origin: false } });
         app.listen(3030, () => {
             console.log("Server listens on port 3030");
         });
